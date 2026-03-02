@@ -24,7 +24,7 @@ public class LoginTest {
 
     @Test
     public void testLoginPageLoads() {
-        driver.get("https://tu-url-de-bancreapay.com/login");
+        driver.get("https://test-bancrea-centraladmin.efevoopay.com/");
         Assert.assertTrue(driver.getTitle().contains("Login"), 
             "El título de la página debe contener 'Login'");
     }

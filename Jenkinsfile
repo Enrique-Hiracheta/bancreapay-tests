@@ -13,7 +13,7 @@ pipeline {
         )
         string(
             name: 'TEST_SUITE',
-            defaultValue: 'testng.xml',
+            defaultValue: 'src/test/resources/testng.xml',
             description: 'Archivo de suite TestNG (relativo a la raíz del proyecto)'
         )
         choice(

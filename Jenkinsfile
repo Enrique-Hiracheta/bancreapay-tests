@@ -26,6 +26,11 @@ pipeline {
             defaultValue: 'http://selenium-hub:4444/wd/hub',
             description: 'URL del Selenium Grid Hub'
         )
+        string(
+			name: 'WORKFLOW_ID',
+			defaultValue: '',
+			description: 'ID del workflow de Squash Orchestrator (automático cuando viene de Squash TM)'
+		)
     }
 
     environment {
@@ -78,12 +83,28 @@ pipeline {
 
     post {
         always {
-            echo '📊 Publicando resultados...'
+            echo '📊 Publicando resultados en Jenkins'
             // Reportes JUnit (compatible con Squash TM)
             junit testResults: '**/target/surefire-reports/*.xml',
                   allowEmptyResults: true
             // Reporte TestNG nativo
             testNG reportFilenamePattern: '**/target/surefire-reports/testng-results.xml'
+        }
+        // Enviar resultados al Orchestrator solo si viene de Squash TM
+            script {
+                if (params.WORKFLOW_ID?.trim()) {
+                    echo "📡 Enviando resultados al Orchestrator (Workflow: ${params.WORKFLOW_ID})..."
+                    withCredentials([file(credentialsId: 'OPENTF_CONFIG', variable: 'OPENTF_CONFIG_FILE')]) {
+                        sh """
+                            export OPENTF_CONFIG=\$OPENTF_CONFIG_FILE
+                            find target/surefire-reports -name '*.xml' | xargs -I{} \
+                                opentf-ctl publish surefire --workflow-id ${params.WORKFLOW_ID} --file {}
+                        """
+                    }
+                } else {
+                    echo "ℹ️ Ejecución directa desde Jenkins — no se reporta al Orchestrator."
+                }
+            }
         }
         success {
             echo '✅ Todos los tests pasaron correctamente.'

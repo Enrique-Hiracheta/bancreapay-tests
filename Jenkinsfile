@@ -83,7 +83,7 @@ pipeline {
             junit testResults: '**/target/surefire-reports/*.xml',
                   allowEmptyResults: true
             // Reporte TestNG nativo
-            testNG reportFilesPattern: '**/target/surefire-reports/testng-results.xml'
+            testNG reportFilenamePattern: '**/target/surefire-reports/testng-results.xml'
         }
         success {
             echo '✅ Todos los tests pasaron correctamente.'

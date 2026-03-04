@@ -3,7 +3,7 @@
 <suite name="BancreaPay Suite">
     <test name="Login Tests">
         <classes>
-            <class name="com.bancreapay.tests.LoginTest"/>
+            <class name="com.bancreapay.bancreapay_tests.LoginTest"/>
         </classes>
     </test>
 </suite>

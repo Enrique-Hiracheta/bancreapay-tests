@@ -92,7 +92,7 @@ pipeline {
         }
         // Enviar resultados al Orchestrator solo si viene de Squash TM
             script {
-                if (params.WORKFLOW_ID?.trim()) {
+                if (params.WORKFLOW_ID && params.WORKFLOW_ID.trim()) {
                     echo "📡 Enviando resultados al Orchestrator (Workflow: ${params.WORKFLOW_ID})..."
                     withCredentials([file(credentialsId: 'OPENTF_CONFIG', variable: 'OPENTF_CONFIG_FILE')]) {
                         sh """

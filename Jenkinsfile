@@ -27,14 +27,13 @@ pipeline {
             description: 'URL del Selenium Grid Hub'
         )
         string(
-			name: 'WORKFLOW_ID',
-			defaultValue: '',
-			description: 'ID del workflow de Squash Orchestrator (automático cuando viene de Squash TM)'
-		)
+            name: 'WORKFLOW_ID',
+            defaultValue: '',
+            description: 'ID del workflow de Squash Orchestrator (automático cuando viene de Squash TM)'
+        )
     }
 
     environment {
-        // Variables de entorno disponibles en todos los stages
         MAVEN_OPTS = '-Xmx1024m'
     }
 
@@ -45,7 +44,7 @@ pipeline {
                 echo "📥 Descargando código de la rama: ${params.BRANCH}"
                 git branch: "${params.BRANCH}",
                     credentialsId: 'github-credentials',
-                    url: 'https://github.com/Enrique-Hiracheta/bancreapay-tests' // ← reemplaza esto
+                    url: 'https://github.com/Enrique-Hiracheta/bancreapay-tests'
             }
         }
 
@@ -83,14 +82,11 @@ pipeline {
 
     post {
         always {
-            echo '📊 Publicando resultados en Jenkins'
-            // Reportes JUnit (compatible con Squash TM)
+            echo '📊 Publicando resultados en Jenkins...'
             junit testResults: '**/target/surefire-reports/*.xml',
                   allowEmptyResults: true
-            // Reporte TestNG nativo
             testNG reportFilenamePattern: '**/target/surefire-reports/testng-results.xml'
-        }
-        // Enviar resultados al Orchestrator solo si viene de Squash TM
+
             script {
                 if (params.WORKFLOW_ID && params.WORKFLOW_ID.trim()) {
                     echo "📡 Enviando resultados al Orchestrator (Workflow: ${params.WORKFLOW_ID})..."
@@ -116,7 +112,6 @@ pipeline {
             echo '⚠️ La ejecución terminó con tests fallidos.'
         }
         cleanup {
-            // Limpia el workspace al final para no acumular basura
             cleanWs()
         }
     }
